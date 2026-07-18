@@ -55,7 +55,7 @@ def run_telemetry_pipeline():
         '-c:v', 'libx264', '-preset', 'veryfast', '-b:v', '2500k',
         '-maxrate', '3000k', '-bufsize', '5000k', '-g', '60', '-pix_fmt', 'yuv420p',
         '-c:a', 'aac', '-b:a', '128k', '-f', 'flv',
-        f'rtmp://a.rtmp.youtube.com/live2/{YOUTUBE_KEY}'
+        f'rtmp://x.rtmp.youtube.com/live2/{YOUTUBE_KEY}'
     ]
 
     process = subprocess.Popen(ffmpeg_cmd, stdin=subprocess.PIPE)
