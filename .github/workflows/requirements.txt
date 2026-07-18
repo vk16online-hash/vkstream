@@ -1,0 +1,6 @@
+opencv-python-headless
+requests
+imageio[ffmpeg]
+imageio-ffmpeg
+fastapi
+uvicorn
