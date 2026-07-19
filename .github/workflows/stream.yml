@@ -6,16 +6,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      
-      - name: Install dependencies
+      - name: Setup
         run: |
-          sudo apt-get update && sudo apt-get install -y ffmpeg python3-pip
-          pip3 install -r requirements.txt  # මෙතනදී තමයි අර feedparser එක Install වෙන්නේ
+          sudo apt-get update && sudo apt-get install -y ffmpeg fonts-dejavu python3-pip
+          pip3 install feedparser
+          python3 update_news.py &
           
-      - name: Start Python Script & Stream
+      - name: Start Streaming
         run: |
-          # 1. නිව්ස් අප්ඩේට් කරන ස්ක්‍රිප්ට් එක Background එකේ පටන් ගන්නවා
-          python3 update_news.py & 
-          
-          # 2. FFmpeg එක පටන් ගන්නවා (නිව්ස් එක news.txt එකෙන් ගන්නවා)
-          ffmpeg -re -stream_loop -1 -i background.mp4 -vf "drawtext=fontfile=/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf:textfile=news.txt:reload=1:y=h-50:x=w-mod(t*100\,w+tw):fontcolor=white:fontsize=40:box=1:boxcolor=black@0.5" -c:v libx264 -preset ultrafast -tune zerolatency -b:v 1500k -maxrate 1500k -bufsize 3000k -pix_fmt yuv420p -c:a aac -b:a 128k -f flv "rtmp://a.rtmp.youtube.com/live2/${{ secrets.STREAM_KEY }}"
+          ffmpeg -re -stream_loop -1 -i background.mp4 -vf "drawtext=fontfile=/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf:textfile=news.txt:reload=1:y=h-50:x=w-mod(t*100\,w+tw):fontsize=40:fontcolor=white:box=1:boxcolor=black@0.5, drawtext=fontfile=/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf:textfile=dashboard.txt:reload=1:x=w-450:y=100:fontsize=22:fontcolor=yellow:line_spacing=40" -c:v libx264 -preset ultrafast -tune zerolatency -b:v 1500k -maxrate 1500k -bufsize 3000k -pix_fmt yuv420p -c:a aac -b:a 128k -f flv "rtmp://a.rtmp.youtube.com/live2/${{ secrets.STREAM_KEY }}"
