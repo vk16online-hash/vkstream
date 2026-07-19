@@ -1,29 +1,30 @@
 import feedparser
 import time
 
-# අපේ ප්‍රධාන පුවත් මූලාශ්‍ර
-feeds = [
+news_urls = ["https://www.motorsport.com/rss/f1/news/"]
+dashboard_urls = [
     "https://www.motorsport.com/rss/f1/news/",
-    "https://www.autosport.com/rss/feed/f1",
-    "https://www.crash.net/rss/f1"
+    "https://www.motorsport.com/rss/nascar-cup/news/",
+    "https://www.motorsport.com/rss/motogp/news/",
+    "https://www.motorsport.com/rss/wec/news/"
 ]
 
-def fetch_latest_news():
-    news_list = []
-    for url in feeds:
-        feed = feedparser.parse(url)
-        for entry in feed.entries[:5]: # සෑම සයිට් එකකින්ම නිව්ස් 5ක්
-            news_list.append(entry.title)
+def update_files():
+    # නිව්ස් බාර් එක සඳහා (News Bar)
+    news_feed = feedparser.parse(news_urls[0])
+    with open("news.txt", "w", encoding="utf-8") as f:
+        f.write(" | ".join([entry.title for entry in news_feed.entries[:5]]))
     
-    # පේළි 15ක් පමණක් තෝරා ගැනීම
-    return news_list[:15]
+    # දකුණු පැත්තේ ලිස්ට් එක සඳහා (Upcoming Races)
+    dashboard_list = []
+    for url in dashboard_urls:
+        feed = feedparser.parse(url)
+        for entry in feed.entries[:3]:
+            dashboard_list.append(entry.title)
+    
+    with open("dashboard.txt", "w", encoding="utf-8") as f:
+        f.write("\n".join(dashboard_list[:15]))
 
 while True:
-    try:
-        latest_news = fetch_latest_news()
-        with open("news.txt", "w", encoding="utf-8") as f:
-            for item in latest_news:
-                f.write(item + "  |  ") # නිව්ස් එකින් එක ස්ක්‍රෝල් වෙන්න
-    except:
-        pass
-    time.sleep(300) # මිනිත්තු 5කට සැරයක් අලුත් නිව්ස් ඔටෝම හොයනවා
+    update_files()
+    time.sleep(300) # මිනිත්තු 5කට සැරයක් අප්ඩේට් වේ
