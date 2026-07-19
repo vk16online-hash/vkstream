@@ -1,13 +1,29 @@
+import feedparser
 import time
 
-# මෙතනට ඔබේ නිව්ස් එක එන ඕනෑම API එකක කෝඩ් එකක් දාන්න පුළුවන්
-# අපි දැනට නිකන් උදාහරණයක් විදියට මේක හදමු
-def get_latest_news():
-    # මෙතනට ඔබේ දත්ත එන ස්ක්‍රිප්ට් එක ලියන්න (උදා: F1/Motorsport news)
-    return "🚀 Motorsport Live: Max Verstappen P1 | Next Race: Spa | Data updated at " + time.strftime("%H:%M:%S")
+# අපේ ප්‍රධාන පුවත් මූලාශ්‍ර
+feeds = [
+    "https://www.motorsport.com/rss/f1/news/",
+    "https://www.autosport.com/rss/feed/f1",
+    "https://www.crash.net/rss/f1"
+]
+
+def fetch_latest_news():
+    news_list = []
+    for url in feeds:
+        feed = feedparser.parse(url)
+        for entry in feed.entries[:5]: # සෑම සයිට් එකකින්ම නිව්ස් 5ක්
+            news_list.append(entry.title)
+    
+    # පේළි 15ක් පමණක් තෝරා ගැනීම
+    return news_list[:15]
 
 while True:
-    news = get_latest_news()
-    with open("news.txt", "w", encoding="utf-8") as f:
-        f.write(news)
-    time.sleep(30) # විනාඩි 1/2කට සැරයක් අප්ඩේට් වෙනවා
+    try:
+        latest_news = fetch_latest_news()
+        with open("news.txt", "w", encoding="utf-8") as f:
+            for item in latest_news:
+                f.write(item + "  |  ") # නිව්ස් එකින් එක ස්ක්‍රෝල් වෙන්න
+    except:
+        pass
+    time.sleep(300) # මිනිත්තු 5කට සැරයක් අලුත් නිව්ස් ඔටෝම හොයනවා
